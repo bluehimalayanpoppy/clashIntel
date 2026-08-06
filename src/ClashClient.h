@@ -1,18 +1,31 @@
 #pragma once 
 
 #include <string>
+#include <curl/curl.h>
+#include <iostream>
 
 class ClashClient {
 
 public:  //jwt json web token, password for api
-    explicit ClashClient(const std::string& token): token_(token)
+    explicit ClashClient(const std::string& token): token_(token){}
+
+    std::string getPlayer(const std::string& playerTag) {
+    std::string url = "https://api.clashroyale.com/v1/players/" + urlEncodeTag(playerTag);
+    return fetch(url);
+}
+
+std::string getBattleLog(const std::string& playerTag) {
+    std::string url = "https://api.clashroyale.com/v1/players/" + urlEncodeTag(playerTag) + "/battlelog";
+    return fetch(url);
+}
+
 private:
     std::string token_;
 
-private:
 
 
-};
+
+
 
 //man CURLOPT_WRITEFUNCTION, must match libcurls required signature 
 //libcurl calls this multiple times when response bytes arrive
@@ -71,21 +84,26 @@ std:: string fetch (const std::string &url)
 
         //done using memory
         curl_slist_free_all(headers); 
-        curl_slist_cleanup(curl); 
+        curl_easy_cleanup(curl); 
     }
 
     return response; 
 }
-
-
-std::string getPlayer(const std::string& playerTag) {
-    std::string url = "https://api.clashroyale.com/v1/players/" + urlEncodeTag(playerTag);
-    return fetch(url);
+static std::string urlEncodeTag (const std::string &tag)
+{
+    if (tag.empty() || tag[0] != '#')
+    {
+        return tag; 
+    }
+    //replace # with %23
+    std::string url = "%23";
+    for (size_t i = 1; i < tag.length(); ++i)
+    {
+        url.push_back(tag[i]);
+    }
+    return url; 
 }
 
-std::string getBattleLog(const std::string& playerTag) {
-    std::string url = "https://api.clashroyale.com/v1/players/" + urlEncodeTag(playerTag) + "/battlelog";
-    return fetch(url);
-}
 
-static std::string urlencodeTag (const std::)
+
+};
