@@ -7,7 +7,6 @@
 Battle::Battle()
 {
     won = false;
-
     myTrophies = 0;
     opponentTrophies = 0;
 
@@ -16,6 +15,9 @@ Battle::Battle()
 
     myAverageCardLevel = 0.0;
     opponentAverageCardLevel = 0.0;
+
+    myDeck.clear();
+    opponentDeck.clear();
 
     //cards will be added later when parsing JSON
 }

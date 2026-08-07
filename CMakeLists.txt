@@ -7,7 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(CURL REQUIRED)
 find_package(nlohmann_json REQUIRED)
 
-add_executable(clashintel src/main.cpp)
+add_executable(clashintel
+    src/main.cpp
+    src/Battle.cpp
+    src/BattleParser.cpp
+)
 
 target_link_libraries(clashintel PRIVATE CURL::libcurl nlohmann_json::nlohmann_json)
 
