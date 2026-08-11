@@ -11,6 +11,7 @@ add_executable(clashintel
     src/main.cpp
     src/Battle.cpp
     src/BattleParser.cpp
+    src/CsvExporter.cpp
 )
 
 target_link_libraries(clashintel PRIVATE CURL::libcurl nlohmann_json::nlohmann_json)

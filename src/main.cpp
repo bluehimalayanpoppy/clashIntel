@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include "ClashClient.h"
 #include "BattleParser.h"
+#include "CsvExporter.h"
 
 
 int main(int argc, char ** argv)
@@ -72,5 +73,11 @@ int main(int argc, char ** argv)
             std::cout << "  " << card << "\n";
         }
 
+    }
+
+    //writes battles to csv file
+    if (CsvExporter::exportBattles(battles, "data/battles.csv"))
+    {
+    std::cout << "battles exported successfully\n";
     }
 }
