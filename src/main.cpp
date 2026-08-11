@@ -3,6 +3,7 @@
 #include "ClashClient.h"
 #include "BattleParser.h"
 #include "CsvExporter.h"
+#include "PlayerParser.h"
 
 
 int main(int argc, char ** argv)
@@ -33,6 +34,18 @@ int main(int argc, char ** argv)
     //gets player information from the clash royale api
     std::string playerData = client.getPlayer(argv[1]);
 
+    //creates parser object
+    PlayerParser playerParser;
+
+
+    //converts JSON string into a Player object
+    Player player = playerParser.parsePlayer(playerData);
+
+
+    //prints player information
+    std::cout << "My trophies: " << player.trophies << "\n";
+    std::cout << "Best trophies: " << player.bestTrophies << "\n";
+    
     //gets card information from the clash royale api
     std::string cardData = client.getCards();
 

@@ -9,8 +9,12 @@ bool CsvExporter::exportBattles(
     const std::string& filename
 )
 {
-    //opens the csv file for writing
-    std::ofstream file(filename);
+
+    //checks if the csv file already exists
+    bool fileExists = std::ifstream(filename).good();
+
+    //so it doesnt overwrite
+    std::ofstream file(filename,std::ios::app);
 
     if (!file.is_open())
     {
@@ -18,9 +22,11 @@ bool CsvExporter::exportBattles(
         return false;
     }
 
+    if (!fileExists)
+    {
     //writes the csv header
     file << "won,my_trophies,opponent_trophies,my_crowns,opponent_crowns,my_deck,opponent_deck,my_average_card_level,opponent_average_card_level\n";
-
+    }
     //writes each battle to the csv file
     for (const auto& battle : battles)
     {
