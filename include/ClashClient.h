@@ -18,6 +18,10 @@ std::string getBattleLog(const std::string& playerTag) {
     std::string url = "https://api.clashroyale.com/v1/players/" + urlEncodeTag(playerTag) + "/battlelog";
     return fetch(url);
 }
+std::string getCards() {
+    std::string url = "https://api.clashroyale.com/v1/cards";
+    return fetch(url);
+}
 
 private:
     std::string token_;

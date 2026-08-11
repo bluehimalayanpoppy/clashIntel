@@ -30,6 +30,18 @@ int main(int argc, char ** argv)
     //gets raw battle log JSON from Clash API
     std::string battleData = client.getBattleLog(argv[1]);
 
+    //gets player information from the clash royale api
+    std::string playerData = client.getPlayer(argv[1]);
+
+    //gets card information from the clash royale api
+    std::string cardData = client.getCards();
+
+    //prints player,card json
+    std::cout << "PLAYER JSON:\n";
+    std::cout << playerData << "\n";
+    std::cout << "CARD JSON:\n";
+    std::cout << cardData << "\n";
+
     //creates parser object
     BattleParser parser;
 
@@ -80,4 +92,5 @@ int main(int argc, char ** argv)
     {
     std::cout << "battles exported successfully\n";
     }
+
 }

@@ -140,7 +140,6 @@ std::vector<Battle> BattleParser::parseBattles(const std::string& jsonData)
     }
 
 
-
     //returns all converted battles
     return battles;
 }
