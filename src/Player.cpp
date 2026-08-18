@@ -6,7 +6,8 @@
 Player::Player()
 {
     name = "";
-    totalTrophies = 0;
+    trophies = 0;
+    bestTrophies = 0;
 
     currentDeck.clear();
 }

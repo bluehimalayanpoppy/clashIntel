@@ -18,10 +18,10 @@ Player PlayerParser::parsePlayer(const std::string& jsonData)
     //constructor gives it default values before api data is filled in
     Player player;
     //gets player's current trophy count
-    player.trophies = parsedData["trophies"];
+    player.trophies = parsedData["trophies"].get<int>();
 
     //gets player's highest trophy count
-    player.bestTrophies = parsedData["bestTrophies"];
+    player.bestTrophies = parsedData["bestTrophies"].get<int>();
 
     //returns completed Player object
     return player;

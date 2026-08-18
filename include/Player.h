@@ -7,7 +7,9 @@ class Player
 {
 public:
     std::string name;
-    int totalTrophies;
+    int trophies;
+    int bestTrophies;
+    
     std::vector<std::string> currentDeck;
     Player();
 };
