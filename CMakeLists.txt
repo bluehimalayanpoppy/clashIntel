@@ -18,6 +18,7 @@ add_executable(clashintel
 
     src/Card.cpp
     src/CardParser.cpp
+    src/Analyzer.cpp
 )
 add_executable(CardParserTest
     tests/CardParserTest.cpp
