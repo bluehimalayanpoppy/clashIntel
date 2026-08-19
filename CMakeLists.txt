@@ -15,7 +15,8 @@ add_executable(clashintel
     src/Player.cpp
     src/PlayerParser.cpp
     src/CsvExporter.cpp 
-
+    src/CsvReader.cpp
+    
     src/Card.cpp
     src/CardParser.cpp
     src/Analyzer.cpp
@@ -30,3 +31,19 @@ target_link_libraries(CardParserTest PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(clashintel PRIVATE CURL::libcurl nlohmann_json::nlohmann_json)
 
 target_include_directories(clashintel PRIVATE include)
+
+add_executable(AnalyzerTest
+    tests/AnalyzerTest.cpp
+    src/Analyzer.cpp
+    src/Battle.cpp
+    src/BattleParser.cpp
+    src/Card.cpp
+    src/CardParser.cpp
+)
+
+target_include_directories(AnalyzerTest PRIVATE include)
+
+target_link_libraries(AnalyzerTest PRIVATE
+    CURL::libcurl
+    nlohmann_json::nlohmann_json
+)
