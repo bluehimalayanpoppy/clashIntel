@@ -49,11 +49,6 @@ std::vector<Battle> CsvReader::readBattles(
         //my crowns
         std::getline(ss, value, ',');
         battle.myCrowns = std::stoi(value);
-
-        //opponent crowns
-        std::getline(ss, value, ',');
-        battle.opponentCrowns = std::stoi(value);
-
         //my deck
         std::getline(ss, value, ',');
 

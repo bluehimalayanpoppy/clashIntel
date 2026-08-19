@@ -30,10 +30,8 @@ bool CsvExporter::exportBattles(
     //writes each battle to the csv file
     for (const auto& battle : battles)
     {
-        file << battle.won << ","
-             << battle.myTrophies << ","
-             << battle.opponentTrophies << ","
-             << battle.myCrowns << ",";
+        file << battle.won << "," << battle.myTrophies << "," << battle.opponentTrophies << ","
+        << battle.myCrowns << "," << battle.opponentCrowns << ",";
             
     
          //for one battle get the decks

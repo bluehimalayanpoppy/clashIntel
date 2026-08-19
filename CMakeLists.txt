@@ -16,7 +16,7 @@ add_executable(clashintel
     src/PlayerParser.cpp
     src/CsvExporter.cpp 
     src/CsvReader.cpp
-    
+
     src/Card.cpp
     src/CardParser.cpp
     src/Analyzer.cpp
@@ -38,6 +38,7 @@ add_executable(AnalyzerTest
     src/Battle.cpp
     src/BattleParser.cpp
     src/Card.cpp
+    src/CsvReader.cpp
     src/CardParser.cpp
 )
 

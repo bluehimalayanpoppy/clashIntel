@@ -6,6 +6,7 @@
 #include "BattleParser.h"
 #include "CardParser.h"
 #include "Analyzer.h"
+#include "CsvReader.h"
 
 //loads variables from the .env file
 void loadEnv(const std::string& filename)
@@ -88,16 +89,34 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    //creates the analyzer
-    Analyzer analyzer;
+    //reads the accumulated battles from the CSV
+CsvReader csvReader;
 
-    //trains the analyzer using past battles
-    analyzer.train(battles, cards);
+std::vector<Battle> savedBattles =
+    csvReader.readBattles("data/battles.csv");
 
-    //uses one of the battles to test the prediction
-    double probability = analyzer.predict(battles[0], cards);
+std::cout << "Battles in CSV: "
+          << savedBattles.size() << "\n";
 
-    //prints the predicted win probability
-    std::cout << "Predicted win probability: " << probability * 100.0 << "%\n";
-    return 0;
+if (savedBattles.empty())
+{
+    std::cerr << "Error: no saved battles found\n";
+    return 1;
+}
+
+//creates the analyzer
+Analyzer analyzer;
+
+//trains the analyzer using all accumulated battles
+analyzer.train(savedBattles, cards);
+
+//uses one of the saved battles to test the prediction
+double probability =
+    analyzer.predict(savedBattles[0], cards);
+
+//prints the predicted win probability
+std::cout << "Predicted win probability: "
+          << probability * 100.0 << "%\n";
+
+return 0;
 }
