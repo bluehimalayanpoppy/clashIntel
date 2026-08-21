@@ -104,19 +104,22 @@ if (savedBattles.empty())
     return 1;
 }
 
-//creates the analyzer
-Analyzer analyzer;
 
+Analyzer analyzer;
 //trains the analyzer using all accumulated battles
 analyzer.train(savedBattles, cards);
 
 //uses one of the saved battles to test the prediction
 double probability =
     analyzer.predict(savedBattles[0], cards);
-
 //prints the predicted win probability
-std::cout << "Predicted win probability: "
-          << probability * 100.0 << "%\n";
+std::cout << "Predicted win probability: " << probability * 100.0 << "%\n";
+
+double actualWinRate = analyzer.getWinRate(savedBattles);
+
+std::cout << "Actual win rate: " << actualWinRate * 100.0 << "%\n";
+
+std::cout << "Predicted win probability: " << probability * 100.0 << "%\n";
 
 return 0;
 }

@@ -186,3 +186,22 @@ double Analyzer::predict(
     //1 / (1 + exp(-x))
     return sigmoid(score);
 }
+//for actual
+double Analyzer::getWinRate(
+    const std::vector<Battle>& battles) const
+{
+    if (battles.empty())
+    {
+        return 0.0;
+    }
+    int wins = 0;
+    for (const auto& battle : battles)
+    {
+        if (battle.won)
+        {
+            wins++;
+        }
+    }
+    return static_cast<double>(wins) /
+           battles.size();
+}

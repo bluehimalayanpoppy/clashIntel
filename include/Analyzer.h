@@ -34,4 +34,6 @@ public:
 
     //predicts the win probability for a battle
     double predict(const Battle& battle,const std::vector<Card>& cards) const;
+    //the actual win rate from the training battles
+    double getWinRate(const std::vector<Battle>& battles) const;
 };
