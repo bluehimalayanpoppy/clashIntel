@@ -30,59 +30,70 @@ std::vector<Battle> CsvReader::readBattles(
             continue;
         }
 
-        std::stringstream ss(line);
-        std::string value;
-        Battle battle;
-
-        //won
-        std::getline(ss, value, ',');
-        battle.won = (value == "1");
-
-        //my trophies
-        std::getline(ss, value, ',');
-        battle.myTrophies = std::stoi(value);
-
-        //opponent trophies
-        std::getline(ss, value, ',');
-        battle.opponentTrophies = std::stoi(value);
-
-        //my crowns
-        std::getline(ss, value, ',');
-        battle.myCrowns = std::stoi(value);
-        //my deck
-        std::getline(ss, value, ',');
-
-        std::stringstream myDeckStream(value);
-        std::string card;
-
-        while (std::getline(myDeckStream, card, '|'))
+        try
         {
-            if (!card.empty())
+            std::stringstream ss(line);
+            std::string value;
+            Battle battle;
+
+            //won
+            std::getline(ss, value, ',');
+            battle.won = (value == "1");
+
+            //my trophies
+            std::getline(ss, value, ',');
+            battle.myTrophies = std::stoi(value);
+
+            //opponent trophies
+            std::getline(ss, value, ',');
+            battle.opponentTrophies = std::stoi(value);
+
+            //my crowns
+            std::getline(ss, value, ',');
+            battle.myCrowns = std::stoi(value);
+
+            //my deck
+            std::getline(ss, value, ',');
+
+            std::stringstream myDeckStream(value);
+            std::string card;
+
+            while (std::getline(myDeckStream, card, '|'))
             {
-                battle.myDeck.push_back(card);
+                if (!card.empty())
+                {
+                    battle.myDeck.push_back(card);
+                }
             }
+
+            //opponent deck
+            std::getline(ss, value, ',');
+
+            std::stringstream opponentDeckStream(value);
+
+            while (std::getline(opponentDeckStream, card, '|'))
+            {
+                if (!card.empty())
+                {
+                    battle.opponentDeck.push_back(card);
+                }
+            }
+
+            //my average card level
+            std::getline(ss, value, ',');
+            battle.myAverageCardLevel = std::stod(value);
+
+            //opponent average card level
+            std::getline(ss, value, ',');
+            battle.opponentAverageCardLevel = std::stod(value);
+
+            battles.push_back(battle);
         }
-        //opponent deck
-        std::getline(ss, value, ',');
-
-        std::stringstream opponentDeckStream(value);
-
-        while (std::getline(opponentDeckStream, card, '|'))
+        catch (const std::exception& e)
         {
-            if (!card.empty())
-            {
-                battle.opponentDeck.push_back(card);
-            }
+            std::cerr << "Skipping invalid CSV row: "<< line << "\n";
         }
-
-        //my average card level
-        std::getline(ss, value, ',');
-        battle.myAverageCardLevel = std::stod(value);
-        //opponent average card level
-        std::getline(ss, value, ',');
-        battle.opponentAverageCardLevel = std::stod(value);
-
-        battles.push_back(battle);
     }
+
     return battles;
 }

@@ -13,6 +13,12 @@ Player PlayerParser::parsePlayer(const std::string& jsonData)
     //converts raw string into a json object
     json parsedData = json::parse(jsonData);
 
+    //checks if the API returned an error
+    if (parsedData.contains("reason"))
+    {
+        std::cerr << "Player API error: " << parsedData["reason"].get<std::string>() << " - "  << parsedData["message"].get<std::string>()<< "\n";
+        return Player();
+    }
 
     //creates a new Player object
     //constructor gives it default values before api data is filled in

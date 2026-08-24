@@ -1,20 +1,31 @@
 #include "Analyzer.h"
 #include <cmath>
+#include <iostream>
+#include <limits>
 
-//converts the weighted feature score into a probability
+// Converts a score into a probability.
 double Analyzer::sigmoid(double x) const
 {
-    return 1.0 / (1.0 + std::exp(-x));
+    // Prevent overflow in exp().
+    if (x >= 0.0)
+    {
+        double z = std::exp(-x);
+        return 1.0 / (1.0 + z);
+    }
+    else
+    {
+        double z = std::exp(x);
+        return z / (1.0 + z);
+    }
 }
 
-//gets the raw numerical features from a battle
+// Gets raw numerical features from a battle.
 std::vector<double> Analyzer::getRawFeatures(
     const Battle& battle,
     const std::vector<Card>& cards) const
 {
     double totalElixir = 0.0;
 
-    //finds the elixir cost of each card in the player's deck
     for (const auto& cardName : battle.myDeck)
     {
         for (const auto& card : cards)
@@ -27,15 +38,14 @@ std::vector<double> Analyzer::getRawFeatures(
         }
     }
 
-    //calculates the average elixir cost of the player's deck
     double averageElixir = 0.0;
 
     if (!battle.myDeck.empty())
     {
-        averageElixir = totalElixir / battle.myDeck.size();
+        averageElixir =
+            totalElixir / static_cast<double>(battle.myDeck.size());
     }
 
-    //returns the raw numerical features used by the analyzer
     return {
         static_cast<double>(battle.myTrophies),
         static_cast<double>(battle.opponentTrophies),
@@ -44,24 +54,30 @@ std::vector<double> Analyzer::getRawFeatures(
     };
 }
 
-//gets normalized numerical features from a battle
+// normalized features
 std::vector<double> Analyzer::getFeatures(
     const Battle& battle,
     const std::vector<Card>& cards) const
 {
-    //gets the raw values before normalization
-    std::vector<double> features = getRawFeatures(battle, cards);
+    std::vector<double> features =
+        getRawFeatures(battle, cards);
 
-    //normalizes each feature using the values found during training
     for (size_t i = 0; i < features.size(); i++)
     {
         double range = featureMax[i] - featureMin[i];
 
-        if (range != 0.0)
+        if (range != 0.0 && std::isfinite(range))
         {
-            features[i] = (features[i] - featureMin[i]) / range;
+            features[i] =
+                (features[i] - featureMin[i]) / range;
         }
         else
+        {
+            features[i] = 0.0;
+        }
+
+        // Safety check.
+        if (!std::isfinite(features[i]))
         {
             features[i] = 0.0;
         }
@@ -70,7 +86,7 @@ std::vector<double> Analyzer::getFeatures(
     return features;
 }
 
-//trains the analyzer by adjusting feature weights using gradient descent
+// Trains the analyzer.
 void Analyzer::train(
     const std::vector<Battle>& battles,
     const std::vector<Card>& cards)
@@ -80,16 +96,15 @@ void Analyzer::train(
         return;
     }
 
-    //start with one weight for each feature
     weights = std::vector<double>(4, 0.0);
     bias = 0.0;
 
-    //start the minimum and maximum values using the first battle
-    featureMin = getRawFeatures(battles[0], cards);
+    featureMin =
+        getRawFeatures(battles[0], cards);
 
-    featureMax = featureMin;
+    featureMax =
+        featureMin;
 
-    //find the minimum and maximum value for each feature
     for (const auto& battle : battles)
     {
         std::vector<double> features =
@@ -112,7 +127,6 @@ void Analyzer::train(
     double learningRate = 0.01;
     int epochs = 1000;
 
-    //repeatedly adjust the weights using past battle results
     for (int epoch = 0; epoch < epochs; epoch++)
     {
         std::vector<double> weightGradient(4, 0.0);
@@ -120,9 +134,9 @@ void Analyzer::train(
 
         for (const auto& battle : battles)
         {
-            std::vector<double> features = getFeatures(battle, cards);
+            std::vector<double> features =
+                getFeatures(battle, cards);
 
-            //calculate the weighted score
             double score = bias;
 
             for (size_t i = 0; i < features.size(); i++)
@@ -130,16 +144,21 @@ void Analyzer::train(
                 score += weights[i] * features[i];
             }
 
-            //convert the score into a win probability
+            // Safety check for invalid scores.
+            if (!std::isfinite(score))
+            {
+                std::cerr
+                    << "ERROR: Invalid analyzer score during training\n";
+
+                return;
+            }
+
             double prediction = sigmoid(score);
 
-            //1 for a win, 0 for a loss
             double actual = battle.won ? 1.0 : 0.0;
 
-            //calculate how far the prediction was from the result
-            double error = prediction - actual;
+            double error =prediction - actual;
 
-            //calculate the gradient for each feature
             for (size_t i = 0; i < features.size(); i++)
             {
                 weightGradient[i] += error * features[i];
@@ -148,53 +167,65 @@ void Analyzer::train(
             biasGradient += error;
         }
 
-        //update the weights in the direction that reduces the error
         for (size_t i = 0; i < weights.size(); i++)
         {
-            weights[i] -= learningRate * (weightGradient[i] / battles.size());
+            weights[i] -=learningRate *(weightGradient[i] /static_cast<double>(battles.size()));
         }
 
-        //update the bias
-        bias -= learningRate *
-                (biasGradient / battles.size());
+        bias -=learningRate *(biasGradient /static_cast<double>(battles.size()));
     }
 }
 
-//predicts the win probability for a battle
-double Analyzer::predict(
-    const Battle& battle,
-    const std::vector<Card>& cards) const
+// Predicts win probability.
+double Analyzer::predict(const Battle& battle,const std::vector<Card>& cards) const
 {
     if (weights.empty())
     {
         return 0.5;
     }
 
-    std::vector<double> features =
-        getFeatures(battle, cards);
+    std::vector<double> features =getFeatures(battle, cards);
 
-    //multiply each feature by its learned weight
     double score = bias;
 
-    //score is bias + w1 * trophies, w2 * opponent trophies, etc.
     for (size_t i = 0; i < features.size(); i++)
     {
         score += weights[i] * features[i];
     }
 
-    //convert the final score into a probability
-    //1 / (1 + exp(-x))
-    return sigmoid(score);
+
+    // never allow NaN/Infinity to reach the GUI.
+    if (!std::isfinite(score))
+    {
+        std::cerr
+            << "ERROR: Analyzer produced invalid score\n";
+
+        return 0.5;
+    }
+
+    double probability = sigmoid(score);
+
+    if (!std::isfinite(probability))
+    {
+        std::cerr
+            << "ERROR: Analyzer produced invalid probability\n";
+
+        return 0.5;
+    }
+
+    return probability;
 }
-//for actual
-double Analyzer::getWinRate(
-    const std::vector<Battle>& battles) const
+
+// calculates historical win rate
+double Analyzer::getWinRate(const std::vector<Battle>& battles) const
 {
     if (battles.empty())
     {
         return 0.0;
     }
+
     int wins = 0;
+
     for (const auto& battle : battles)
     {
         if (battle.won)
@@ -202,6 +233,6 @@ double Analyzer::getWinRate(
             wins++;
         }
     }
-    return static_cast<double>(wins) /
-           battles.size();
+
+    return static_cast<double>(wins) /static_cast<double>(battles.size());
 }
