@@ -9,6 +9,8 @@ Battle::Battle()
     won = false;
     myTrophies = 0;
     opponentTrophies = 0;
+    battleTime = "";
+
 
     myCrowns = 0;
     opponentCrowns = 0;

@@ -8,7 +8,8 @@ public:
 
     //stores whether this battle was a win or loss
     bool won;
-
+    //unique timestamp identifying this battle
+    std::string battleTime;
     //player trophy information before/around the battle
     int myTrophies;
     int opponentTrophies;
