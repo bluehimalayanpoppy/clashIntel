@@ -19,16 +19,13 @@ public:
     );
 
 private:
-    //labels used to display battle information
     QLabel* trophiesLabel;
     QLabel* opponentTrophiesLabel;
     QLabel* levelLabel;
 
-    //labels used to display prediction results
     QLabel* predictionLabel;
     QLabel* historicalLabel;
     QLabel* resultLabel;
 
-    //shows the prediction as a progress bar
     QProgressBar* predictionBar;
 };
